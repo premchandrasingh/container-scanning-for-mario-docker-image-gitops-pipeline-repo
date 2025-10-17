@@ -23,11 +23,13 @@ jobs:
       - name: Get Docker Image from Docker Hub
         run: |
           docker pull docker.io/raghuthesecurityexpert/supermariogitopsproject:${{ env.VERSION }}
+          # Once our Super Mario Docker image is pulled with the specific version and stored on local system, we
+          # are using docker save command to store our Super Mario Docker image in a tar file using hyphen o flag.
           docker save -o supermariolatestdockerimage.tar docker.io/raghuthesecurityexpert/supermariogitopsproject:${{ env.VERSION }}
      
       - name: Run Trivy vulnerability scanner in tarball mode
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@master     # This gitHub action published by Aqua Security, which are the creator of Trivvy scanner
         with:
-          input: /github/workspace/supermariolatestdockerimage.tar
-          exit-code: '1'
-          severity: 'CRITICAL,HIGH'
+          input: /github/workspace/supermariolatestdockerimage.tar  # The extracted tar file above is stored at at GitHub action server's "workspace" folder created by github internally.
+          exit-code: '1'  # Exit code decides whether your build will pass or fail in case security vulnerabilities are identified in your Docker image.
+          severity: 'CRITICAL,HIGH' # If exit code is set to 1 and there are critical and high security vulnerabilities identified in your Docker image, then your build will fail.
